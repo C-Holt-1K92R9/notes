@@ -6,7 +6,7 @@
   <title>Enhanced Note Taking App</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f0f4f8;
       margin: 0;
       padding: 0;
@@ -19,7 +19,7 @@
     }
 
     body.dark-mode {
-      background-color: #2c2c2c;
+      background-color: #1e1e1e;
       color: #e0e0e0;
     }
 
@@ -29,30 +29,36 @@
     }
 
     .note-container {
-      width: 80%;
+      width: 90%;
       max-width: 600px;
-      background-color: #fff;
-      border-radius: 8px;
+      background-color: #ffffff;
+      border-radius: 12px;
       padding: 20px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       display: flex;
       flex-direction: column;
       transition: background-color 0.3s;
     }
 
     body.dark-mode .note-container {
-      background-color: #424242;
+      background-color: #2a2a2a;
     }
 
     .note-container textarea {
       width: 100%;
-      height: 100px;
-      padding: 10px;
+      height: 120px;
+      padding: 12px;
       border: 1px solid #ddd;
       border-radius: 8px;
       font-size: 16px;
       resize: none;
       margin-bottom: 10px;
+      background-color: #f9f9f9;
+    }
+
+    body.dark-mode .note-container textarea {
+      background-color: #3c3c3c;
+      color: #f0f0f0;
     }
 
     .note-container textarea:focus {
@@ -66,6 +72,10 @@
       color: #666;
     }
 
+    body.dark-mode .note-container .char-count {
+      color: #bbb;
+    }
+
     .note-container button {
       padding: 10px;
       background-color: #5c6bc0;
@@ -75,23 +85,30 @@
       cursor: pointer;
       margin-top: 10px;
       font-size: 16px;
+      transition: background-color 0.3s;
     }
 
     .note-container button:hover {
       background-color: #3f51b5;
     }
 
+    body.dark-mode .note-container button {
+      background-color: #6a85b1;
+    }
+
     .toggle-theme {
       margin-bottom: 20px;
       cursor: pointer;
-      padding: 5px 10px;
+      padding: 5px 12px;
       border-radius: 8px;
       border: 1px solid #333;
       background-color: #fff;
+      color: #333;
+      transition: background-color 0.3s, color 0.3s;
     }
 
     body.dark-mode .toggle-theme {
-      background-color: #555;
+      background-color: #444;
       color: #e0e0e0;
     }
 
@@ -104,15 +121,16 @@
       background-color: #fafafa;
       padding: 15px;
       margin-bottom: 10px;
-      border-radius: 8px;
+      border-radius: 12px;
       display: flex;
       flex-direction: column;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       position: relative;
+      transition: background-color 0.3s;
     }
 
     body.dark-mode .note-item {
-      background-color: #616161;
+      background-color: #3a3a3a;
     }
 
     .note-item .note-text {
@@ -125,27 +143,56 @@
       margin-bottom: 10px;
     }
 
+    body.dark-mode .note-item .note-date {
+      color: #aaa;
+    }
+
+    .note-item .buttons-container {
+      display: flex;
+      gap: 5px;
+      justify-content: flex-end;
+    }
+
     .note-item button {
-      align-self: flex-end;
       background-color: #e57373;
+      padding: 5px 10px;
+      border-radius: 8px;
+      border: none;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
     }
 
     .note-item button:hover {
       background-color: #d32f2f;
     }
 
+    .note-item .pin-button {
+      background-color: #ffb300;
+    }
+
+    .note-item .pin-button:hover {
+      background-color: #ffa000;
+    }
+
     .search-bar {
       margin-bottom: 20px;
-      width: 80%;
+      width: 90%;
       max-width: 600px;
     }
 
     .search-bar input {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       border: 1px solid #ddd;
       border-radius: 8px;
       font-size: 16px;
+      background-color: #f9f9f9;
+    }
+
+    body.dark-mode .search-bar input {
+      background-color: #3c3c3c;
+      color: #e0e0e0;
     }
   </style>
 </head>
@@ -153,7 +200,7 @@
 
   <button class="toggle-theme" onclick="toggleTheme()">Toggle Dark Mode</button>
   
-  <h1>Note Taking App</h1>
+  <h1>Enhanced Note Taking App</h1>
 
   <div class="search-bar">
     <input type="text" id="search-input" placeholder="Search notes..." oninput="searchNotes()">
@@ -161,7 +208,7 @@
   
   <div class="note-container">
     <textarea id="note-input" placeholder="Write your note..." oninput="updateCharCount()"></textarea>
-    <div class="char-count" id="char-count">0/200</div>
+    <div class="char-count" id="char-count">0/200 (Words: 0)</div>
     <button onclick="addNote()">Add Note</button>
   </div>
 
@@ -170,10 +217,12 @@
   </div>
 
   <script>
-    // Initialize character count
+    // Initialize character and word count
     function updateCharCount() {
-      const charCount = document.getElementById('note-input').value.length;
-      document.getElementById('char-count').textContent = `${charCount}/200`;
+      const noteText = document.getElementById('note-input').value;
+      const charCount = noteText.length;
+      const wordCount = noteText.trim() ? noteText.trim().split(/\s+/).length : 0;
+      document.getElementById('char-count').textContent = `${charCount}/200 (Words: ${wordCount})`;
     }
 
     // Toggle dark mode
@@ -192,7 +241,7 @@
       if (noteText) {
         const notes = getNotes();
         const timestamp = new Date().toLocaleString();
-        notes.push({ text: noteText, timestamp });
+        notes.push({ text: noteText, timestamp, pinned: false });
         saveNotes(notes);
         displayNotes();
         document.getElementById('note-input').value = ''; // Clear input
@@ -224,10 +273,19 @@
       const notes = getNotes();
       const newText = prompt("Edit your note:", notes[index].text);
       if (newText !== null) {
-        notes[index].text = newText;
+        notes[index].text = newText.trim();
         saveNotes(notes);
         displayNotes();
       }
+    }
+
+    // Pin a note to the top
+    function pinNote(index) {
+      const notes = getNotes();
+      notes[index].pinned = !notes[index].pinned;
+      notes.sort((a, b) => b.pinned - a.pinned || new Date(b.timestamp) - new Date(a.timestamp));
+      saveNotes(notes);
+      displayNotes();
     }
 
     // Display notes on the page
@@ -250,20 +308,32 @@
         noteDate.textContent = `Created on: ${note.timestamp}`;
         noteElement.appendChild(noteDate);
 
+        const buttonsContainer = document.createElement('div');
+        buttonsContainer.classList.add('buttons-container');
+
+        const pinButton = document.createElement('button');
+        pinButton.textContent = note.pinned ? 'Unpin' : 'Pin';
+        pinButton.classList.add('pin-button');
+        pinButton.onclick = function() {
+          pinNote(index);
+        };
+        buttonsContainer.appendChild(pinButton);
+
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
         deleteButton.onclick = function() {
           deleteNote(index);
         };
-        noteElement.appendChild(deleteButton);
+        buttonsContainer.appendChild(deleteButton);
 
         const editButton = document.createElement('button');
         editButton.textContent = 'Edit';
         editButton.onclick = function() {
           editNote(index);
         };
-        noteElement.appendChild(editButton);
+        buttonsContainer.appendChild(editButton);
 
+        noteElement.appendChild(buttonsContainer);
         notesList.appendChild(noteElement);
       });
     }
@@ -290,20 +360,32 @@
           noteDate.textContent = `Created on: ${note.timestamp}`;
           noteElement.appendChild(noteDate);
 
+          const buttonsContainer = document.createElement('div');
+          buttonsContainer.classList.add('buttons-container');
+
+          const pinButton = document.createElement('button');
+          pinButton.textContent = note.pinned ? 'Unpin' : 'Pin';
+          pinButton.classList.add('pin-button');
+          pinButton.onclick = function() {
+            pinNote(index);
+          };
+          buttonsContainer.appendChild(pinButton);
+
           const deleteButton = document.createElement('button');
           deleteButton.textContent = 'Delete';
           deleteButton.onclick = function() {
             deleteNote(index);
           };
-          noteElement.appendChild(deleteButton);
+          buttonsContainer.appendChild(deleteButton);
 
           const editButton = document.createElement('button');
           editButton.textContent = 'Edit';
           editButton.onclick = function() {
             editNote(index);
           };
-          noteElement.appendChild(editButton);
+          buttonsContainer.appendChild(editButton);
 
+          noteElement.appendChild(buttonsContainer);
           notesList.appendChild(noteElement);
         }
       });
